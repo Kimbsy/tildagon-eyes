@@ -10,6 +10,7 @@ max_delay = 50
 eh = 85
 ew = 20
 x_gap = 60
+blink_chance = 0.3
 
 initial_position = [0, 0]
 positions = [
@@ -67,8 +68,6 @@ for _ in range(100):
         0.2 + (random() * 0.2)
     ])
 
-# @TODO: blinking animation
-# @TODO: more complex animations + state machine
 # @TODO: theme swatches in the menu
 # @TODO: don't move menu items when the menu isn't displayed
 
@@ -84,6 +83,8 @@ def colour(ctx, c):
 
 class EyesApp(App):
     def __init__(self):
+        self.state = "looking"
+        self.blink_progress = 0
         self.menu = Menu(
             self,
             sorted(list(THEMES.keys())),
@@ -96,6 +97,7 @@ class EyesApp(App):
         self.y = 0
         self.face_colour = WHITE
         self.eye_colour = BLACK
+        self.eye_state = "open"
 
     def select_handler(self, item, idx):
         if self.display_menu:
@@ -112,11 +114,35 @@ class EyesApp(App):
         else:
             self.minimise()
 
+    def update_blinking(self, delta):
+        self.blink_progress = self.blink_progress + 1
+        p = self.blink_progress
+        if p < 5:
+            self.eye_state = "closed"
+        elif p < 20:
+            self.eye_state = "open"
+        elif p < 22:
+            self.eye_state = "closed"
+        elif p < 24:
+            self.eye_state = "open"
+        elif p < 26:
+            self.eye_state = "closed"
+        else:
+            self.eye_state = "open"
+            self.state = "looking"
+            self.blink_progress = 0
+            self.remaining = new_delay()
+
     def update(self, delta):
-        self.menu.update(delta)
-        if (self.remaining <= 0):
-            self.delay_callback()
-        self.remaining = self.remaining - 1
+        if self.display_menu:
+            self.menu.update(delta)
+        else:
+            if self.state == "blinking":
+                self.update_blinking(delta)
+            else:
+                if self.remaining <= 0:
+                    self.delay_callback()
+                self.remaining = self.remaining - 1
 
     def draw_pride_background(self, ctx):
         colour(ctx, RED)
@@ -139,6 +165,42 @@ class EyesApp(App):
             ctx.rgba(1, 1, 1, brightness)
             ctx.rectangle(x, y, size, size).fill()
 
+    def draw_open_eyes(self, ctx):
+        colour(ctx, self.eye_colour)
+        # draw left eye
+        ctx.rectangle(
+            self.x - (x_gap / 2) - (ew / 2),
+            self.y - (eh / 2),
+            ew,
+            eh
+        ).fill()
+
+        # draw right eye
+        ctx.rectangle(
+            self.x + (x_gap / 2) - (ew / 2),
+            self.y - (eh / 2),
+            ew,
+            eh
+        ).fill()
+
+    def draw_closed_eyes(self, ctx):
+        colour(ctx, self.eye_colour)
+        # draw left eye
+        ctx.rectangle(
+            self.x - (x_gap / 2) - (eh / 4),
+            self.y - (ew / 2),
+            eh / 2,
+            ew / 2
+        ).fill()
+
+        # draw right eye
+        ctx.rectangle(
+            self.x + (x_gap / 2) - (eh / 4),
+            self.y - (ew / 2),
+            eh / 2,
+            ew / 2
+        ).fill()
+
     def draw_face(self, ctx):
         # background
         if self.face_colour == "pride":
@@ -149,20 +211,10 @@ class EyesApp(App):
             colour(ctx, self.face_colour)
             ctx.rectangle(-120, -120, 240, 240).fill()
 
-        colour(ctx, self.eye_colour)
-        # draw left eye
-        ctx.rectangle(
-            self.x - (x_gap / 2) - (ew / 2),
-            self.y - (eh / 2),
-            ew,
-            eh).fill()
-
-        # draw right eye
-        ctx.rectangle(
-            self.x + (x_gap / 2) - (ew / 2),
-            self.y - (eh / 2),
-            ew,
-            eh).fill()
+        if self.eye_state == "open":
+            self.draw_open_eyes(ctx)
+        else:
+            self.draw_closed_eyes(ctx)
 
     def draw(self, ctx):
         clear_background(ctx)
@@ -171,16 +223,21 @@ class EyesApp(App):
             self.menu.draw(ctx)
         else:
             self.draw_face(ctx)
-            
+
+    # @TODO: this is kinda ugly state management
     def delay_callback(self):
         if (self.x == 0 and self.y == 0):
-            new_x, new_y = rand_nth(positions)
-            self.remaining = glance_delay
+            if random() < blink_chance:
+                self.state = "blinking"
+            else:
+                new_x, new_y = rand_nth(positions)
+                self.remaining = glance_delay
+                self.x = new_x
+                self.y = new_y
         else:
             new_x, new_y = initial_position
             self.remaining = new_delay()
-            
-        self.x = new_x
-        self.y = new_y
+            self.x = new_x
+            self.y = new_y
 
 __app_export__ = EyesApp
