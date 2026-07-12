@@ -69,6 +69,8 @@ for _ in range(100):
 
 # @TODO: blinking animation
 # @TODO: more complex animations + state machine
+# @TODO: theme swatches in the menu
+# @TODO: don't move menu items when the menu isn't displayed
 
 def rand_nth(coll):
     return coll[randint(0, len(coll) - 1)]
@@ -111,6 +113,7 @@ class EyesApp(App):
             self.minimise()
 
     def update(self, delta):
+        self.menu.update(delta)
         if (self.remaining <= 0):
             self.delay_callback()
         self.remaining = self.remaining - 1
