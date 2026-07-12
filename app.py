@@ -1,4 +1,4 @@
-import random
+from random import random, randint
 from typing import Literal
 from app import App
 from app_components import Menu, Notification, clear_background
@@ -54,17 +54,27 @@ THEMES = {
     "Forest": [FOREST_GREEN, BROWN],
     "Rose": [LIGHT_PINK, DARK_PINK],
     "Spiderman": [RED, BLUE],
-    "Pride": ["pride", WHITE]
+    "Pride": ["pride", WHITE],
+    "Space": ["space", WHITE]
 }
+
+stars = []
+for _ in range(100):
+    stars.append([
+        randint(-120, 120),
+        randint(-120, 120),
+        randint(1, 3),
+        0.2 + (random() * 0.2)
+    ])
 
 # @TODO: blinking animation
 # @TODO: more complex animations + state machine
 
 def rand_nth(coll):
-    return coll[random.randint(0, len(coll) - 1)]
+    return coll[randint(0, len(coll) - 1)]
 
 def new_delay():
-    return random.randint(min_delay, max_delay)
+    return randint(min_delay, max_delay)
 
 def colour(ctx, c):
     r, g, b = c
@@ -74,7 +84,7 @@ class EyesApp(App):
     def __init__(self):
         self.menu = Menu(
             self,
-            list(THEMES.keys()),
+            sorted(list(THEMES.keys())),
             select_handler = self.select_handler,
             back_handler = self.back_handler
         )
@@ -105,7 +115,7 @@ class EyesApp(App):
             self.delay_callback()
         self.remaining = self.remaining - 1
 
-    def draw_pride_background(ctx):
+    def draw_pride_background(self, ctx):
         colour(ctx, RED)
         ctx.rectangle(-120, -120, 240, 240).fill()
         colour(ctx, ORANGE)
@@ -119,10 +129,19 @@ class EyesApp(App):
         colour(ctx, PURPLE)
         ctx.rectangle(-120, 80, 240, 240).fill()
 
+    def draw_space_background(self, ctx):
+        colour(ctx, DARK_BLUE)
+        ctx.rectangle(-120, -120, 240, 240).fill()
+        for x, y, size, brightness in stars:
+            ctx.rgba(1, 1, 1, brightness)
+            ctx.rectangle(x, y, size, size).fill()
+
     def draw_face(self, ctx):
         # background
         if self.face_colour == "pride":
-            draw_pride_background(ctx)
+            self.draw_pride_background(ctx)
+        elif self.face_colour == "space":
+            self.draw_space_background(ctx)
         else:
             colour(ctx, self.face_colour)
             ctx.rectangle(-120, -120, 240, 240).fill()
