@@ -54,7 +54,6 @@ THEMES = {
     "Desert": [YELLOW, WHITE],
     "Forest": [FOREST_GREEN, BROWN],
     "Rose": [LIGHT_PINK, DARK_PINK],
-    "Spiderman": [RED, BLUE],
     "Pride": ["pride", WHITE],
     "Space": ["space", WHITE]
 }
