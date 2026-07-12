@@ -34,3 +34,6 @@ copy app files over and connect to the badge
 ```
 
 `ctrl-d` to reboot while connected
+
+> [!CAUTION]
+> Update app version in `tildagon.toml` before we make a release!
