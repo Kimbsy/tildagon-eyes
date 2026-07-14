@@ -2,9 +2,17 @@
 
 Some cute animated eyes for your Tildagon badge, lots of colours to choose from.
 
-# Setup and run on badge
+Available form the badge app store as `Tildagon Eyes`
 
-https://tildagon.badge.emfcamp.org/tildagon-apps/development/
+## contributing
+
+Please feel free to make a pull request to add a colour theme.
+
+All you need to do is define your colours (either as an `[R, G, B]` tuple or with a hex string using the `parse_hex` helper function).
+
+Then add an entry into the `THEMES` dictionary keyed by display name and with a `[FACE_COLOUR, EYE_COLOUR]` tuple as the value.
+
+## Setup and run on badge
 
 install pipx
 ``` shell
@@ -36,4 +44,4 @@ copy app files over and connect to the badge
 `ctrl-d` to reboot while connected
 
 > [!CAUTION]
-> Update app version in `tildagon.toml` before we make a release!
+> Note to self: Update app version in `tildagon.toml` before we make a release!
