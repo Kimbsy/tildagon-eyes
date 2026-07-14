@@ -37,4 +37,4 @@ description = "Some cute animated eyes for your Tildagon badge, lots of colours 
 # increased, we interpret this as a new version being released.
 #
 # Version number must be an integer!
-version = "0.0.4"
+version = "0.0.5"

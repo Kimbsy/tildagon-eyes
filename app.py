@@ -41,6 +41,7 @@ YELLOW = parse_hex("#FFED00")
 GREEN = parse_hex("#008026")
 BLUE = parse_hex("#004CFF")
 PURPLE = parse_hex("#732982")
+DESERT_YELLOW = parse_hex("#FFBF46")
 FOREST_GREEN = parse_hex("#4F9D69")
 BROWN = parse_hex("#504136")
 DARK_PINK = parse_hex("#EF0AFF")
@@ -51,9 +52,9 @@ THEMES = {
     "Crab": [CRAB_ORANGE, WHITE],
     "Neon": [ELECTRIC_PINK, ELECTRIC_BLUE],
     "Noir": [GREY, LIGHT_GREY],
-    "Desert": [YELLOW, WHITE],
+    "Desert": [DESERT_YELLOW, WHITE],
     "Forest": [FOREST_GREEN, BROWN],
-    "Rose": [LIGHT_PINK, DARK_PINK],
+    "Lilac": [LIGHT_PINK, DARK_PINK],
     "Pride": ["pride", WHITE],
     "Space": ["space", WHITE]
 }
@@ -66,9 +67,6 @@ for _ in range(100):
         randint(1, 3),
         0.2 + (random() * 0.2)
     ])
-
-# @TODO: theme swatches in the menu
-# @TODO: don't move menu items when the menu isn't displayed
 
 def rand_nth(coll):
     return coll[randint(0, len(coll) - 1)]
